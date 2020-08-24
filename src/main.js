@@ -5,8 +5,10 @@ import router from "./router";
 import store from "./store";
 import "./globalComponents";
 import VueShortkey from "vue-shortkey";
+import Vue2TouchEvents from "vue2-touch-events";
 
 Vue.use(VueShortkey);
+Vue.use(Vue2TouchEvents);
 
 Vue.config.productionTip = false;
 

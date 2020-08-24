@@ -69,7 +69,7 @@ export default {
       if (!this.active) {
         return;
       }
-      return { enter: ["enter"] };
+      return { enter: ["enter"], space: ["space"] };
     },
   },
 
@@ -121,10 +121,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/_mixins";
+
 $block: ".ui-variant";
 
 #{$block} {
   display: block;
+  font-size: var(--font-size-base);
   font-weight: 500;
   line-height: 1.15;
   cursor: pointer;
@@ -133,28 +136,31 @@ $block: ".ui-variant";
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    padding: 2px;
-    border: 1px solid #555;
+    padding: 4px;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
+    color: var(--color-light);
     transition: 0.2s;
 
     &:hover {
-      background: #eee;
+      background: rgba(#fff, 0.2);
     }
 
     #{$block}_active & {
-      border-color: #0f68d2;
-      box-shadow: 0 0 0 1px #0f68d2;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 1px var(--color-primary);
+      background: rgba(#fff, 0.2);
     }
   }
 
   &__control:checked ~ &__box {
-    border-color: #4bb1a9;
-    background: #4bb1a9;
+    border-color: var(--color-success);
+    background: var(--color-success);
     color: #fff;
+    animation: 0.5s linear 0s alternate move_eye;
 
     #{$block}_active & {
-      border-color: #0f68d2;
+      border-color: var(--color-primary);
     }
   }
 
@@ -165,13 +171,18 @@ $block: ".ui-variant";
 
   &__label {
     flex: 1;
+    padding: 2px 0;
+
+    @include display-less(tablet) {
+      padding: calc(var(--gap) / 2);
+    }
   }
 
   &__variant,
   &__check {
-    flex: 0 0 18px;
-    width: 18px;
-    height: 18px;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
     box-sizing: border-box;
   }
 
@@ -180,17 +191,21 @@ $block: ".ui-variant";
     align-items: center;
     justify-content: center;
     position: relative;
-    border: 1px solid #555;
+    border: 1px solid var(--color-border);
     border-radius: 3px;
-    background: #eee;
-    color: #000;
-    font-size: 12px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-size: var(--font-size-tiny);
     font-weight: 600;
+
+    @include display-less(tablet) {
+      display: none;
+    }
   }
 
   &__control:checked ~ &__box > &__variant {
-    background: #fff;
-    color: #000;
+    background: var(--color-light);
+    color: var(--color-text);
   }
 
   &__key {
@@ -213,10 +228,12 @@ $block: ".ui-variant";
     #{$block}_active & {
       color: inherit;
       transform: translateX(0) scaleX(1);
+      transition: transform 0.2s 0.1s cubic-bezier(0, 0, 0.6, 2), color 0.2s;
     }
   }
 
   &__check {
+    align-self: center;
     display: block;
     position: relative;
     opacity: 0;
@@ -248,6 +265,24 @@ $block: ".ui-variant";
   &__control:checked ~ &__box > &__check {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes move_eye {
+  0% {
+    background: var(--color-success);
+  }
+  25% {
+    background: transparent;
+  }
+  50% {
+    background: var(--color-success);
+  }
+  75% {
+    background: transparent;
+  }
+  100% {
+    background: var(--color-success);
   }
 }
 </style>

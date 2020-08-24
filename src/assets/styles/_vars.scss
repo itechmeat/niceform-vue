@@ -1,0 +1,56 @@
+:root {
+  --gap: 16px;
+  --gap-big: 60px;
+  --max-width: 1320px;
+  --min-width: 320px;
+  --layout-wide: 100%;
+  --size-header: 80px;
+  --size-header-mobile: 56px;
+  --size-column: 280px;
+
+  --lighten-percentage: 20%;
+  --darken-precentage: 10%;
+  --color-dark: hsl(209, 56%, 23%);
+  --color-light: hsl(0, 0%, 100%);
+  --color-gray: hsl(206, 38%, 87%);
+  --color-primary: hsl(216, 100%, 50%);
+  --color-primary-hover: hsl(216, 100%, calc(50% - var(--darken-precentage)));
+  --color-accent: hsl(274, 50%, 42%);
+  //--color-accent-hover: hoverColor($colorAccent);
+  --color-warning: hsl(40, 95%, 64%);
+  //--color-warning-hover: hoverColor($colorWarning);
+  --color-danger: hsl(0, 53%, 57%);
+  //--color-danger-hover: hoverColor($colorDanger);
+  --color-false: #C23131;
+  //--color-danger-hover: hoverColor($colorDanger);
+  --color-success: hsl(176, 97%, 31%);
+  //--color-success-hover: hoverColor($colorSuccess);
+  --color-true: #58A733;
+  //--color-success-hover: hoverColor($colorSuccess);
+  --color-info: hsl(203, 81%, 55%);
+  //--color-info-hover: hoverColor($colorInfo);
+  --color-link: hsl(203, 81%, 55%);
+  //--color-link-hover: hoverColor($colorLink);
+  --color-text: hsl(216, 12%, 25%);
+  --color-text-secondary: hsl(215, 12%, 41%);
+  --color-text-hint: #cedae4;
+  --color-border: hsl(207, 45%, 81%);
+  --color-bg: hsl(207, 53%, 97%);
+  --color-bg-dark: hsl(205, 44%, 92%);
+
+  --font-size-base: 16px;
+  --font-size-tiny: 12px;
+  --font-size-small: 14px;
+  --font-size-big: 18px;
+  --font-size-bigger: 20px;
+  --font-size-legend: 22px;
+  --font-size-large: 28px;
+  --font-size-title: 30px;
+  --font-size-headline: 40px;
+
+  --font-family: 'Open Sans', sans-serif;
+
+  --border-raius: 12px;
+
+  --speed: 0.25s;
+}

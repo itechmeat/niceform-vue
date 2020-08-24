@@ -1,6 +1,7 @@
 <template>
   <article
     v-shortkey="{ left: ['arrowleft'], right: ['arrowright'] }"
+    v-touch:swipe="handleSwipe"
     class="feed"
     @shortkey="navigate"
   >
@@ -18,26 +19,49 @@ export default {
     navigate(e) {
       this.$emit(e.srcKey);
     },
+
+    handleSwipe(e) {
+      if (e === "left") {
+        this.$emit("right");
+      }
+
+      if (e === "right") {
+        this.$emit("left");
+      }
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/_mixins";
+
 $block: ".feed";
 
 #{$block} {
   overflow: hidden;
   width: 100vw;
+  min-width: 100%;
   height: 100vh;
+  min-height: 100%;
 
   &__line {
     position: relative;
-    width: 500px;
-    max-width: calc(100% - 32px);
-    height: calc(100vh - 32px);
-    margin: 0 auto;
-    perspective: 500px;
-    transform-style: preserve-3d;
+
+    @include display-less(tablet) {
+      width: 100%;
+      height: 100%;
+      background: var(--color-dark);
+    }
+
+    @include display(tablet) {
+      width: 500px;
+      max-width: calc(100% - 32px);
+      height: calc(100vh - 32px);
+      margin: 0 auto;
+      perspective: 500px;
+      transform-style: preserve-3d;
+    }
   }
 }
 </style>

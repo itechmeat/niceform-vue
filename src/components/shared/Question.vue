@@ -1,47 +1,49 @@
 <template>
   <section v-if="formattedValue" :class="classes">
-    <header class="question__header">
-      <small class="question__number">{{ ownIndex + 1 }}</small>
-      <h2 class="question__title">
-        {{ formattedValue.headline }}
-        <sup v-if="formattedValue.required" class="question__required">*</sup>
-      </h2>
-    </header>
+    <div class="question__box">
+      <header class="question__header">
+        <small class="question__number">{{ ownIndex + 1 }}</small>
+        <h2 class="question__title">
+          {{ formattedValue.headline }}
+          <sup v-if="formattedValue.required" class="question__required">*</sup>
+        </h2>
+      </header>
 
-    <div class="question__form">
-      <div
-        v-if="formattedValue.question_type === 'multiple-choice'"
-        :class="[
-          'question__options',
-          'question__options_multiple',
-          { 'question__options_with-columns': hasColumns },
-        ]"
-        v-shortkey="hotKeys"
-        @shortkey="navigate"
-      >
-        <ui-variant
-          v-for="(option, index) in formattedValue.choices"
-          :key="index"
-          :type="typeOfControl"
-          :name="formattedValue.identifier"
-          :value="option.value"
-          :label="option.label"
-          :variant="getCharNum(index)"
-          :checked="option.selected"
-          :active="activeVariantIndex === index"
-          @change="change"
-        />
-      </div>
+      <div class="question__form">
+        <div
+          v-if="formattedValue.question_type === 'multiple-choice'"
+          :class="[
+            'question__options',
+            'question__options_multiple',
+            { 'question__options_with-columns': hasColumns },
+          ]"
+          v-shortkey="hotKeys"
+          @shortkey="navigate"
+        >
+          <ui-variant
+            v-for="(option, index) in formattedValue.choices"
+            :key="index"
+            :type="typeOfControl"
+            :name="formattedValue.identifier"
+            :value="option.value"
+            :label="option.label"
+            :variant="getCharNum(index)"
+            :checked="option.selected"
+            :active="activeVariantIndex === index"
+            @change="change"
+          />
+        </div>
 
-      <div
-        v-else-if="formattedValue.question_type === 'text'"
-        class="question__options"
-      >
-        <component :is="'ui-' + typeOfControl" :value="formattedValue.text" />
-      </div>
+        <div
+          v-else-if="formattedValue.question_type === 'text'"
+          class="question__options"
+        >
+          <component :is="'ui-' + typeOfControl" :value="formattedValue.text" />
+        </div>
 
-      <div v-else class="question__options">
-        :(
+        <div v-else class="question__options">
+          :(
+        </div>
       </div>
     </div>
   </section>
@@ -275,13 +277,15 @@ export default {
     submit() {
       setTimeout(() => {
         this.$emit("submit");
-      }, 500);
+      }, 700);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/_mixins";
+
 $block: ".question";
 
 #{$block} {
@@ -289,66 +293,121 @@ $block: ".question";
   top: 50%;
   right: 0;
   left: 0;
-  padding: 16px 48px;
-  border: 1px solid #4bb1a9;
-  background: #fff;
+  background: var(--color-dark);
+  color: var(--color-light);
   line-height: 1.25;
   text-align: left;
-  opacity: 0;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
 
   &:not(#{$block}_active) {
     pointer-events: none;
   }
 
-  &_active {
-    opacity: 1;
-    transform: translate(0, -50%) rotate3d(100, 0, 0, 0deg) scale(1);
-  }
+  @include display-less(tablet) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
-  &_prev {
-    transform: translate(-120%, -50%) rotateY(-45deg) scale(0.5);
+    &_active {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
 
-    &-1 {
-      opacity: 0.5;
-      transform: translate(-86%, -50%) rotateY(-25deg) scale(0.9);
+    &_prev {
+      transform: translate(-100%, 0);
+    }
+
+    &_next {
+      transform: translate(100%, 0);
     }
   }
 
-  &_next {
-    transform: translate(120%, -50%) rotateY(45deg) scale(0.5);
+  @include display(tablet) {
+    opacity: 0;
 
-    &-1 {
-      opacity: 0.5;
-      transform: translate(86%, -50%) rotateY(25deg) scale(0.9);
+    &_active {
+      opacity: 1;
+      transform: translate(0, -50%) rotate3d(100, 0, 0, 0deg) scale(1);
+    }
+
+    &_prev {
+      transform: translate(-110%, -50%) rotateY(-40deg) scale(0.4);
+
+      &-1 {
+        opacity: 0.5;
+        transform: translate(-86%, -50%) rotateY(-25deg) scale(0.8);
+      }
+
+      &-2 {
+        opacity: 0.1;
+      }
+    }
+
+    &_next {
+      transform: translate(110%, -50%) rotateY(40deg) scale(0.4);
+
+      &-1 {
+        opacity: 0.5;
+        transform: translate(86%, -50%) rotateY(25deg) scale(0.8);
+      }
+
+      &-2 {
+        opacity: 0.1;
+      }
+    }
+  }
+
+  &__box {
+    @include display-less(tablet) {
+      flex: 1;
+      width: 100%;
+      padding: calc(var(--gap) * 2);
+    }
+
+    @include display(tablet) {
+      padding: var(--gap) calc(var(--gap) * 4);
     }
   }
 
   &__header {
     position: relative;
+    margin: 0 0 16px;
   }
 
   &__number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 2px;
-    right: calc(100% + 8px);
-    font-size: 18px;
+    display: inline;
+    font-size: var(--font-size-big);
     font-weight: 500;
-    color: #999;
+    color: var(--color-light);
 
     &::after {
       content: ".";
       display: inline;
     }
+
+    @include display(tablet) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 2px;
+      right: calc(100% + 8px);
+    }
   }
 
   &__title {
-    margin: 0 0 16px;
-    font-size: 20px;
+    margin: 0;
+    font-size: var(--font-size-bigger);
     font-weight: 500;
+
+    @include display-less(tablet) {
+      display: inline;
+    }
   }
 
   &__options {
@@ -356,11 +415,16 @@ $block: ".question";
       display: grid;
       grid-row-gap: 8px;
       grid-column-gap: 24px;
-      width: max-content;
     }
 
-    &_with-columns {
-      grid-template-columns: 1fr 1fr;
+    @include display(tablet) {
+      &_multiple {
+        width: max-content;
+      }
+
+      &_with-columns {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   }
 }

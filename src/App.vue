@@ -5,21 +5,11 @@
 </template>
 
 <style lang="scss">
-* {
-  box-sizing: border-box;
-}
+@import "@/assets/styles/main";
+</style>
 
-body {
-  margin: 0;
-  padding: 0;
-}
-
+<style lang="scss" scoped>
 .app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #fafafa;
-  color: #2c3e50;
-  text-align: center;
+  min-width: var(--min-width);
 }
 </style>

@@ -39,7 +39,7 @@ $block: ".ui-input";
   &__field {
     width: 100%;
     padding: 6px 16px;
-    font-size: 20px;
+    font-size: var(--font-size-bigger);
   }
 }
 </style>
