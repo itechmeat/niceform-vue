@@ -1,10 +1,12 @@
 <template>
   <article
-    v-shortkey="{ up: ['meta', 'arrowup'], down: ['meta', 'arrowdown'] }"
+    v-shortkey="{ left: ['arrowleft'], right: ['arrowright'] }"
     class="feed"
     @shortkey="navigate"
   >
-    <slot />
+    <div class="feed__line">
+      <slot />
+    </div>
   </article>
 </template>
 
@@ -24,6 +26,18 @@ export default {
 $block: ".feed";
 
 #{$block} {
-  padding: 20px;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+
+  &__line {
+    position: relative;
+    width: 500px;
+    max-width: calc(100% - 32px);
+    height: calc(100vh - 32px);
+    margin: 0 auto;
+    perspective: 500px;
+    transform-style: preserve-3d;
+  }
 }
 </style>

@@ -1,10 +1,7 @@
 <template>
-  <section
-    v-if="formattedValue"
-    :class="['question', { question_active: active }]"
-  >
+  <section v-if="formattedValue" :class="classes">
     <header class="question__header">
-      <small class="question__number">{{ number }}</small>
+      <small class="question__number">{{ ownIndex + 1 }}</small>
       <h2 class="question__title">
         {{ formattedValue.headline }}
         <sup v-if="formattedValue.required" class="question__required">*</sup>
@@ -67,7 +64,14 @@ export default {
       type: Number,
       required: true,
     },
-    active: Boolean,
+    ownIndex: {
+      type: Number,
+      required: true,
+    },
+    activeIndex: {
+      type: Number,
+      required: true,
+    },
   },
 
   data() {
@@ -82,6 +86,25 @@ export default {
   },
 
   computed: {
+    classes() {
+      const result = [
+        "question",
+        { question_active: this.ownIndex === this.activeIndex },
+      ];
+
+      if (this.ownIndex < this.activeIndex) {
+        result.push(`question_prev`);
+        result.push(`question_prev-${this.activeIndex - this.ownIndex}`);
+      }
+
+      if (this.ownIndex > this.activeIndex) {
+        result.push(`question_next`);
+        result.push(`question_next-${this.ownIndex - this.activeIndex}`);
+      }
+
+      return result;
+    },
+
     typeOfControl() {
       if (this.formattedValue.question_type === "text") {
         if (!this.formattedValue.multiline) {
@@ -120,7 +143,7 @@ export default {
     },
 
     hotKeys() {
-      if (!this.active) {
+      if (this.activeIndex !== this.ownIndex) {
         return;
       }
 
@@ -139,10 +162,10 @@ export default {
   },
 
   watch: {
-    active: {
+    activeIndex: {
       immediate: true,
       handler(val) {
-        if (val) {
+        if (val === this.ownIndex) {
           return;
         }
         this.activeVariantIndex = null;
@@ -196,9 +219,7 @@ export default {
         });
         variant.selected = true;
 
-        setTimeout(() => {
-          this.$emit("submit");
-        }, 500);
+        this.submit();
       }
     },
 
@@ -241,9 +262,7 @@ export default {
           });
           this.formattedValue.choices[index].selected = true;
 
-          setTimeout(() => {
-            this.$emit("submit");
-          }, 500);
+          this.submit();
         }
 
         if (this.typeOfControl === "checkbox") {
@@ -251,6 +270,12 @@ export default {
             .choices[index].selected;
         }
       }
+    },
+
+    submit() {
+      setTimeout(() => {
+        this.$emit("submit");
+      }, 500);
     },
   },
 };
@@ -260,17 +285,43 @@ export default {
 $block: ".question";
 
 #{$block} {
-  max-width: 460px;
-  margin: 32px auto;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
   padding: 16px 48px;
   border: 1px solid #4bb1a9;
   background: #fff;
   line-height: 1.25;
   text-align: left;
+  opacity: 0;
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+
+  &:not(#{$block}_active) {
+    pointer-events: none;
+  }
 
   &_active {
-    border-color: #0f68d2;
-    box-shadow: 0 0 8px #0f68d2;
+    opacity: 1;
+    transform: translate(0, -50%) rotate3d(100, 0, 0, 0deg) scale(1);
+  }
+
+  &_prev {
+    transform: translate(-120%, -50%) rotateY(-45deg) scale(0.5);
+
+    &-1 {
+      opacity: 0.5;
+      transform: translate(-86%, -50%) rotateY(-25deg) scale(0.9);
+    }
+  }
+
+  &_next {
+    transform: translate(120%, -50%) rotateY(45deg) scale(0.5);
+
+    &-1 {
+      opacity: 0.5;
+      transform: translate(86%, -50%) rotateY(25deg) scale(0.9);
+    }
   }
 
   &__header {
@@ -282,9 +333,9 @@ $block: ".question";
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: 3px;
+    top: 2px;
     right: calc(100% + 8px);
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     color: #999;
 
@@ -296,7 +347,7 @@ $block: ".question";
 
   &__title {
     margin: 0 0 16px;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
   }
 

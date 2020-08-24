@@ -1,12 +1,13 @@
 <template>
   <div class="home">
-    <feed v-if="questionnaire" @up="prevQuestion" @down="nextQuestion">
+    <feed v-if="questionnaire" @left="prevQuestion" @right="nextQuestion">
       <question
         v-for="(question, index) in questionnaire.questions"
         :key="question.identifier"
         :value="question"
+        :own-index="index"
+        :active-index="activeQuestionIndex"
         :number="index + 1"
-        :active="index === activeQuestionIndex"
         @submit="nextQuestion"
       />
     </feed>
