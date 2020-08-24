@@ -40,10 +40,15 @@ $block: ".feed";
 
 #{$block} {
   overflow: hidden;
-  width: 100vw;
-  min-width: 100%;
-  height: 100vh;
-  min-height: 100%;
+
+  @include display-less(tablet) {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
 
   &__line {
     position: relative;

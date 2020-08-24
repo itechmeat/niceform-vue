@@ -130,6 +130,9 @@ $block: ".ui-variant";
   font-size: var(--font-size-base);
   font-weight: 500;
   line-height: 1.15;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
   cursor: pointer;
 
   &__box {

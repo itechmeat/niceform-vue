@@ -41,15 +41,17 @@ export default {
 
   computed: {
     canNext() {
-      console.log("===", this.questionnaire.questions.length);
       if (this.questionnaire.questions.length === 0) {
         return;
       }
 
-      // const question = this.questionnaire.questions[this.activeQuestionIndex];
+      const question = this.questionnaire.questions[this.activeQuestionIndex];
 
-      // return !question.required;
-      return true;
+      return (
+        !question.required ||
+        (question.choices && question.choices.some((item) => item.selected)) ||
+        (question.text && question.text.length > 0)
+      );
     },
   },
 
@@ -60,7 +62,9 @@ export default {
         if (!data || !data.questionnaire || data.questionnaire.length === 0) {
           return;
         }
-        console.log(data.questionnaire.questions.map((item) => item.required));
+        // console.log(
+        //   data.questionnaire.questions.map((item) => item.description)
+        // );
         this.questionnaire = data.questionnaire;
       } catch (err) {
         console.error("fetchQuestionsList", err);

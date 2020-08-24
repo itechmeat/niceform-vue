@@ -44,7 +44,7 @@
         "question_type": "multiple-choice",
         "identifier": "list_12111610",
         "headline": "Bist Du Beamter oder im öffentlichen Dienst angestellt?",
-        "description": null,
+        "description": "Lorem ipsum dolor sit amet, scaevola expetenda splendide vel ne, ut est possim phaedrum perpetua.",
         "required": true,
         "multiple": "false",
         "choices": [
@@ -485,7 +485,7 @@
         "identifier": "textarea_12110979",
         "headline": "Hast Du noch weitere Informationen oder Anmerkungen für uns?",
         "description": null,
-        "required": false,
+        "required": true,
         "multiline": "true",
         "jumps": []
       }

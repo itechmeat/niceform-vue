@@ -7,6 +7,9 @@
           {{ formattedValue.headline }}
           <sup v-if="formattedValue.required" class="question__required">*</sup>
         </h2>
+        <p v-if="formattedValue.description" class="question__description">
+          {{ formattedValue.description }}
+        </p>
       </header>
 
       <div class="question__form">
@@ -45,6 +48,22 @@
           :(
         </div>
       </div>
+
+      <footer class="question__footer">
+        <div class="question__note">
+          {{ noteText }}
+        </div>
+        <div class="question__submit">
+          <ui-button
+            type="warning"
+            outlined
+            :disabled="!canSubmit"
+            @click="submit(0)"
+          >
+            Enter <span class="question__enter-icon">↵</span>
+          </ui-button>
+        </div>
+      </footer>
     </div>
   </section>
 </template>
@@ -137,6 +156,53 @@ export default {
           (choice) => choice.label.length < CHARS_TO_COLUMNS
         ) && this.value.choices.length > 2
       );
+    },
+
+    noteText() {
+      if (!this.typeOfControl || !this.formattedValue) {
+        return;
+      }
+
+      if (!this.formattedValue.required) {
+        if (this.typeOfControl === "radio") {
+          return "You can choose any option or skip";
+        }
+
+        if (this.typeOfControl === "checkbox") {
+          return "You can choose any or more options or skip";
+        }
+
+        return "Enter something or skip";
+      } else {
+        if (this.typeOfControl === "radio") {
+          return "* Please choose any option";
+        }
+
+        if (this.typeOfControl === "checkbox") {
+          return "* Please choose any options";
+        }
+
+        return "* This option is required";
+      }
+    },
+
+    canSubmit() {
+      if (!this.typeOfControl || !this.formattedValue) {
+        return;
+      }
+
+      if (!this.formattedValue.required) {
+        return true;
+      }
+
+      if (
+        this.formattedValue.choices &&
+        this.formattedValue.choices.length > 0
+      ) {
+        return this.formattedValue.choices.some((item) => item.selected);
+      }
+
+      return this.formattedValue.text && this.formattedValue.text.length > 0;
     },
 
     hotChars() {
@@ -274,10 +340,10 @@ export default {
       }
     },
 
-    submit() {
+    submit(pause = 700) {
       setTimeout(() => {
         this.$emit("submit");
-      }, 700);
+      }, pause);
     },
   },
 };
@@ -365,6 +431,8 @@ $block: ".question";
   &__box {
     @include display-less(tablet) {
       flex: 1;
+      display: flex;
+      flex-direction: column;
       width: 100%;
       padding: calc(var(--gap) * 2);
     }
@@ -376,7 +444,7 @@ $block: ".question";
 
   &__header {
     position: relative;
-    margin: 0 0 16px;
+    margin: 0 0 var(--gap);
   }
 
   &__number {
@@ -396,7 +464,7 @@ $block: ".question";
       justify-content: center;
       position: absolute;
       top: 2px;
-      right: calc(100% + 8px);
+      right: calc(100% + (var(--gap) / 2));
     }
   }
 
@@ -410,11 +478,16 @@ $block: ".question";
     }
   }
 
+  &__description {
+    margin: calc(var(--gap) / 2) 0 0;
+    font-size: var(--font-size-small);
+  }
+
   &__options {
     &_multiple {
       display: grid;
-      grid-row-gap: 8px;
-      grid-column-gap: 24px;
+      grid-row-gap: calc(var(--gap) / 2);
+      grid-column-gap: calc(var(--gap) * 1.5);
     }
 
     @include display(tablet) {
@@ -425,6 +498,33 @@ $block: ".question";
       &_with-columns {
         grid-template-columns: 1fr 1fr;
       }
+    }
+  }
+
+  &__form {
+    @include display-less(tablet) {
+      flex: 1;
+    }
+  }
+
+  &__footer {
+    display: grid;
+    align-items: center;
+    grid-column-gap: var(--gap);
+    grid-template-columns: 1fr auto;
+    margin-top: calc(var(--gap) * 2);
+  }
+
+  &__note {
+    font-size: var(--font-size-small);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+
+  &__enter-icon {
+    @include display-less(tablet) {
+      display: none;
     }
   }
 }
