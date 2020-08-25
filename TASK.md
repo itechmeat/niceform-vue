@@ -21,7 +21,7 @@ question
 - [x] Mobile First, use some SVG, use JS ES 6-7 features, good conventions for CSS
 
 ## Task
-- [ ] Write a small web application that enables a user to answer a questionnaire
+- [x] Write a small web application that enables a user to answer a questionnaire
 - [x] Use the given questionnaire.json to derive the definition of a questionnaire
 - [x] Use a modern client side MVC Framework like Ember (highly preferred), GlimmerVM (bleeding edge), or
 react (although we prefer emberJ)
