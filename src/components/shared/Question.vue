@@ -447,7 +447,7 @@ $block: ".question";
       display: flex;
       flex-direction: column;
       width: 100%;
-      padding: calc(var(--gap) * 2);
+      padding: var(--gap);
     }
 
     @include display(tablet) {
@@ -531,6 +531,10 @@ $block: ".question";
     grid-column-gap: var(--gap);
     grid-template-columns: 1fr auto;
     margin-top: calc(var(--gap) * 2);
+
+    @include display-less(tablet) {
+      margin-left: calc(96px + var(--gap));
+    }
   }
 
   &__note {

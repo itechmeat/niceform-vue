@@ -19,6 +19,8 @@
         @submit="nextQuestion"
       />
     </feed>
+
+    <keyboard ref="keyboard" @click="handleKeyboardClick" />
   </div>
 </template>
 
@@ -27,6 +29,7 @@ import { mapGetters, mapActions } from "vuex";
 import * as TYPES from "@/store/modules/questionnaire/types";
 import Feed from "@/components/shared/Feed";
 import Question from "@/components/shared/Question";
+import Keyboard from "@/components/shared/Keyboard";
 
 export default {
   name: "Home",
@@ -34,6 +37,7 @@ export default {
   components: {
     Feed,
     Question,
+    Keyboard,
   },
 
   data() {
@@ -83,6 +87,7 @@ export default {
         return;
       }
       this.activeQuestionIndex--;
+      this.$refs.keyboard.handleKey("left");
     },
 
     nextQuestion() {
@@ -91,6 +96,18 @@ export default {
         return;
       }
       this.activeQuestionIndex++;
+      this.$refs.keyboard.handleKey("right");
+    },
+
+    handleKeyboardClick(key) {
+      switch (key) {
+        case "right":
+          this.nextQuestion();
+          break;
+        case "left":
+          this.prevQuestion();
+          break;
+      }
     },
 
     shake() {
