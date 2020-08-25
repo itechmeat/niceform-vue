@@ -16,11 +16,33 @@ const getters = {
 
 const mutations = {
   [TYPES.SET_QUESTIONNAIRE]: (state, payload) => {
-    state.questionnaire = payload;
+    const {
+      id,
+      identifier,
+      name,
+      description,
+      category_name_hyphenated,
+    } = payload;
+
+    let category;
+
+    if (category_name_hyphenated && category_name_hyphenated.length > 0) {
+      category = category_name_hyphenated
+        .toLowerCase()
+        .replace(/\u0026shy;/g, "-");
+    }
+
+    state.questionnaire = {
+      id,
+      identifier,
+      name,
+      description,
+      category,
+    };
   },
 
-  [TYPES.SET_QUESTIONS]: (state) => {
-    state.questions = state.questionnaire.questions.map((question) => {
+  [TYPES.SET_QUESTIONS]: (state, payload) => {
+    state.questions = payload.map((question) => {
       const result = { ...question };
 
       if (result.multiple) {
@@ -73,14 +95,19 @@ const mutations = {
 };
 
 const actions = {
-  async fetchQuestionnaire({ commit }) {
+  async fetchQuestionnaire({ commit, state }) {
+    if (state.questionnaire) {
+      return;
+    }
+
     try {
       const { data } = await axios.get("/api/questionnaire.json");
       if (!data || !data.questionnaire || data.questionnaire.length === 0) {
         return;
       }
+
       commit("SET_QUESTIONNAIRE", data.questionnaire);
-      commit("SET_QUESTIONS");
+      commit("SET_QUESTIONS", data.questionnaire.questions);
     } catch (err) {
       console.error("fetchQuestionsList", err);
     }

@@ -5,7 +5,7 @@ Create a small questionnaire Web Application similar to what Typeform.com offers
 ## Concepts
 
 ### Questionnaire
-- [ ] A Questionnaire has a title and a description
+- [x] A Questionnaire has a title and a description
 - [x] A questionnaire has a defined sequence of question that need to be answered
 
 ### Question

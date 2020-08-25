@@ -1,43 +1,21 @@
 <template>
   <div class="home">
-    <feed
-      v-if="questions"
-      :can-navigate="
-        currentQuestion && currentQuestion.question_type !== 'text'
-      "
-      @left="prevQuestion()"
-      @right="nextQuestion()"
-    >
-      <question
-        v-for="(question, index) in questions"
-        :key="question.identifier"
-        :value="question"
-        :own-index="index"
-        :active-index="activeQuestionIndex"
-        :number="index + 1"
-        :wrong="isShaking && activeQuestionIndex === index"
-        @submit="nextQuestion"
-      />
-    </feed>
-
-    <keyboard ref="keyboard" @click="handleKeyboardClick" />
+    <div>
+      <questionnaire-card :value="questionnaire" :number="numberOfQuestions" />
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 import * as TYPES from "@/store/modules/questionnaire/types";
-import Feed from "@/components/shared/Feed";
-import Question from "@/components/shared/Question";
-import Keyboard from "@/components/shared/Keyboard";
+import QuestionnaireCard from "@/components/shared/QuestionnaireCard";
 
 export default {
   name: "Home",
 
   components: {
-    Feed,
-    Question,
-    Keyboard,
+    QuestionnaireCard,
   },
 
   data() {
@@ -57,66 +35,28 @@ export default {
       questions: TYPES.GET_QUESTIONS,
     }),
 
-    currentQuestion() {
-      if (this.questions.length === 0) {
+    numberOfQuestions() {
+      if (!this.questions) {
         return;
       }
 
-      return this.questions[this.activeQuestionIndex];
-    },
-
-    canNext() {
-      if (!this.currentQuestion) {
-        return;
-      }
-
-      return (
-        !this.currentQuestion.required ||
-        (this.currentQuestion.choices &&
-          this.currentQuestion.choices.some((item) => item.selected)) ||
-        (this.currentQuestion.text && this.currentQuestion.text.length > 0)
-      );
+      return this.questions.length;
     },
   },
 
   methods: {
     ...mapActions("questionnaire", ["fetchQuestionnaire"]),
-
-    prevQuestion() {
-      if (this.activeQuestionIndex === 0) {
-        return;
-      }
-      this.activeQuestionIndex--;
-      this.$refs.keyboard.handleKey("left");
-    },
-
-    nextQuestion() {
-      if (this.activeQuestionIndex >= this.questions.length || !this.canNext) {
-        this.shake();
-        return;
-      }
-      this.activeQuestionIndex++;
-      this.$refs.keyboard.handleKey("right");
-    },
-
-    handleKeyboardClick(key) {
-      switch (key) {
-        case "right":
-          this.nextQuestion();
-          break;
-        case "left":
-          this.prevQuestion();
-          break;
-      }
-    },
-
-    shake() {
-      this.isShaking = true;
-
-      setTimeout(() => {
-        this.isShaking = false;
-      }, 500);
-    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+$block: ".home";
+
+#{$block} {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+}
+</style>
