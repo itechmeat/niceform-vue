@@ -112,6 +112,31 @@ const actions = {
       console.error("fetchQuestionsList", err);
     }
   },
+
+  submitQuestions({ state }) {
+    const answers = state.questions.map((question) => {
+      const answer = {
+        identifier: question.identifier,
+      };
+
+      if (question.choices) {
+        answer.choices = question.choices
+          .filter((choice) => choice.selected)
+          .map((choice) => choice.value);
+      }
+
+      if (question.text) {
+        answer.text = question.text;
+      }
+
+      return answer;
+    });
+    console.log("Your answers as if sent to the server, thanks!");
+    console.log({
+      questionnaire: state.questionnaire.identifier,
+      answers,
+    });
+  },
 };
 
 export default {

@@ -4,7 +4,12 @@
       <header class="question__header">
         <small class="question__number">{{ ownIndex + 1 }}</small>
         <h2 class="question__title">
-          {{ value.headline }}
+          <template v-if="value.question_type === 'final'">
+            {{ finalText }}
+          </template>
+          <template v-else>
+            {{ value.headline }}
+          </template>
           <sup v-if="value.required" class="question__required">*</sup>
         </h2>
         <p v-if="value.description" class="question__description">
@@ -116,6 +121,7 @@ export default {
         "question",
         { question_wrong: this.wrong },
         { question_active: this.ownIndex === this.activeIndex },
+        { question_final: this.value.question_type === "final" },
       ];
 
       if (this.ownIndex < this.activeIndex) {
@@ -238,6 +244,13 @@ export default {
       });
 
       return result;
+    },
+
+    finalText() {
+      if (this.ownIndex !== this.activeIndex) {
+        return "You are almost done!";
+      }
+      return this.value.headline;
     },
   },
 
@@ -458,6 +471,12 @@ $block: ".question";
   &__header {
     position: relative;
     margin: 0 0 var(--gap);
+
+    #{$block}_final & {
+      margin: 0;
+      padding: 60px 0;
+      text-align: center;
+    }
   }
 
   &__number {
@@ -465,6 +484,10 @@ $block: ".question";
     font-size: var(--font-size-big);
     font-weight: 500;
     color: var(--color-light);
+
+    #{$block}_final & {
+      display: none;
+    }
 
     &::after {
       content: ".";
@@ -520,6 +543,10 @@ $block: ".question";
   }
 
   &__form {
+    #{$block}_final & {
+      display: none;
+    }
+
     @include display-less(tablet) {
       flex: 1;
     }
@@ -531,6 +558,10 @@ $block: ".question";
     grid-column-gap: var(--gap);
     grid-template-columns: 1fr auto;
     margin-top: calc(var(--gap) * 2);
+
+    #{$block}_final & {
+      display: none;
+    }
 
     @include display-less(tablet) {
       margin-left: calc(96px + var(--gap));

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <feed
-      v-if="questions"
+      v-if="slides"
       :can-navigate="
         currentQuestion && currentQuestion.question_type !== 'text'
       "
@@ -9,7 +9,7 @@
       @right="nextQuestion()"
     >
       <question
-        v-for="(question, index) in questions"
+        v-for="(question, index) in slides"
         :key="question.identifier"
         :value="question"
         :own-index="index"
@@ -57,12 +57,26 @@ export default {
       questions: TYPES.GET_QUESTIONS,
     }),
 
-    currentQuestion() {
+    slides() {
       if (this.questions.length === 0) {
         return;
       }
 
-      return this.questions[this.activeQuestionIndex];
+      return [
+        ...this.questions,
+        {
+          headline: "Thank you for the answers!",
+          question_type: "final",
+        },
+      ];
+    },
+
+    currentQuestion() {
+      if (this.slides.length === 0) {
+        return;
+      }
+
+      return this.slides[this.activeQuestionIndex];
     },
 
     canNext() {
@@ -79,8 +93,19 @@ export default {
     },
   },
 
+  watch: {
+    activeQuestionIndex: {
+      handler(index) {
+        if (!this.questions || index < this.questions.length) {
+          return;
+        }
+        this.submitQuestions();
+      },
+    },
+  },
+
   methods: {
-    ...mapActions("questionnaire", ["fetchQuestionnaire"]),
+    ...mapActions("questionnaire", ["fetchQuestionnaire", "submitQuestions"]),
 
     prevQuestion() {
       if (this.activeQuestionIndex === 0) {
@@ -91,7 +116,7 @@ export default {
     },
 
     nextQuestion() {
-      if (this.activeQuestionIndex >= this.questions.length || !this.canNext) {
+      if (this.activeQuestionIndex >= this.slides.length - 1 || !this.canNext) {
         this.shake();
         return;
       }
