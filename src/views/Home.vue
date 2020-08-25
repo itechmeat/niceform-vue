@@ -8,6 +8,7 @@
         :own-index="index"
         :active-index="activeQuestionIndex"
         :number="index + 1"
+        :wrong="isShaking && activeQuestionIndex === index"
         @submit="nextQuestion"
       />
     </feed>
@@ -15,7 +16,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
+// import * as TYPES from "@/store/modules/questionnaire/types";
 import Feed from "@/components/shared/Feed";
 import Question from "@/components/shared/Question";
 
@@ -30,16 +32,20 @@ export default {
   data() {
     return {
       selectedProgram: "",
-      questionnaire: null,
       activeQuestionIndex: 0,
+      isShaking: false,
     };
   },
 
   mounted() {
-    this.fetchQuestionsList();
+    this.fetchQuestionnaire();
   },
 
   computed: {
+    ...mapGetters("questionnaire", {
+      questionnaire: "GET_QUESTIONNAIRE",
+    }),
+
     canNext() {
       if (this.questionnaire.questions.length === 0) {
         return;
@@ -56,20 +62,7 @@ export default {
   },
 
   methods: {
-    async fetchQuestionsList() {
-      try {
-        const { data } = await axios.get("/api/questionnaire.json");
-        if (!data || !data.questionnaire || data.questionnaire.length === 0) {
-          return;
-        }
-        // console.log(
-        //   data.questionnaire.questions.map((item) => item.description)
-        // );
-        this.questionnaire = data.questionnaire;
-      } catch (err) {
-        console.error("fetchQuestionsList", err);
-      }
-    },
+    ...mapActions("questionnaire", ["fetchQuestionnaire"]),
 
     prevQuestion() {
       if (this.activeQuestionIndex === 0) {
@@ -83,9 +76,18 @@ export default {
         this.activeQuestionIndex >= this.questionnaire.questions.length - 1 ||
         !this.canNext
       ) {
+        this.shake();
         return;
       }
       this.activeQuestionIndex++;
+    },
+
+    shake() {
+      this.isShaking = true;
+
+      setTimeout(() => {
+        this.isShaking = false;
+      }, 500);
     },
   },
 };

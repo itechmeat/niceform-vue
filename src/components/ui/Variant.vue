@@ -160,7 +160,7 @@ $block: ".ui-variant";
     border-color: var(--color-success);
     background: var(--color-success);
     color: #fff;
-    animation: 0.5s linear 0s alternate move_eye;
+    animation: 0.5s linear 0s alternate blink;
 
     #{$block}_active & {
       border-color: var(--color-primary);
@@ -271,7 +271,7 @@ $block: ".ui-variant";
   }
 }
 
-@keyframes move_eye {
+@keyframes blink {
   0% {
     background: var(--color-success);
   }

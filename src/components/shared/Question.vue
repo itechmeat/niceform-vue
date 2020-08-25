@@ -93,6 +93,7 @@ export default {
       type: Number,
       required: true,
     },
+    wrong: Boolean,
   },
 
   data() {
@@ -110,6 +111,7 @@ export default {
     classes() {
       const result = [
         "question",
+        { question_wrong: this.wrong },
         { question_active: this.ownIndex === this.activeIndex },
       ];
 
@@ -365,6 +367,10 @@ $block: ".question";
   text-align: left;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
 
+  &_wrong {
+    animation: 0.5s ease-in-out 0s alternate shake;
+  }
+
   &:not(#{$block}_active) {
     pointer-events: none;
   }
@@ -520,12 +526,32 @@ $block: ".question";
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    transition: color 0.2s;
+
+    #{$block}_wrong & {
+      color: var(--color-danger);
+    }
   }
 
   &__enter-icon {
     @include display-less(tablet) {
       display: none;
     }
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translate(0, -50%);
+  }
+  20%,
+  60% {
+    transform: translate(-10px, -50%);
+  }
+  40%,
+  80% {
+    transform: translate(10px, -50%);
   }
 }
 </style>
