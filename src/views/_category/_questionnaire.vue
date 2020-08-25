@@ -1,5 +1,7 @@
 <template>
-  <div class="home">
+  <div class="questionnaire">
+    <stepper :total="questions.length - 1" :current="activeQuestionIndex" />
+
     <feed
       v-if="slides"
       :can-navigate="
@@ -30,6 +32,7 @@ import * as TYPES from "@/store/modules/questionnaire/types";
 import Feed from "@/components/shared/Feed";
 import Question from "@/components/shared/Question";
 import Keyboard from "@/components/shared/Keyboard";
+import Stepper from "@/components/shared/Stepper";
 
 export default {
   name: "QuestionnairePage",
@@ -38,6 +41,7 @@ export default {
     Feed,
     Question,
     Keyboard,
+    Stepper,
   },
 
   data() {

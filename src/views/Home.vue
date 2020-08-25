@@ -1,8 +1,6 @@
 <template>
   <div class="home">
-    <div>
-      <questionnaire-card :value="questionnaire" :number="numberOfQuestions" />
-    </div>
+    <questionnaire-card :value="questionnaire" :number="numberOfQuestions" />
   </div>
 </template>
 
