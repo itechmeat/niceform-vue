@@ -62,10 +62,11 @@ $block: ".card";
   }
 
   @include display(tablet) {
-    width: 400px;
-    max-width: 96%;
-    height: 400px;
-    max-height: 96vh;
+    display: block;
+    width: 96%;
+    max-width: 400px;
+    height: 96vh;
+    max-height: 400px;
   }
 
   &__icon {
