@@ -1,8 +1,15 @@
 <template>
   <div class="home">
-    <feed v-if="questionnaire" @left="prevQuestion" @right="nextQuestion">
+    <feed
+      v-if="questions"
+      :can-navigate="
+        currentQuestion && currentQuestion.question_type !== 'text'
+      "
+      @left="prevQuestion()"
+      @right="nextQuestion()"
+    >
       <question
-        v-for="(question, index) in questionnaire.questions"
+        v-for="(question, index) in questions"
         :key="question.identifier"
         :value="question"
         :own-index="index"
@@ -17,7 +24,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-// import * as TYPES from "@/store/modules/questionnaire/types";
+import * as TYPES from "@/store/modules/questionnaire/types";
 import Feed from "@/components/shared/Feed";
 import Question from "@/components/shared/Question";
 
@@ -31,7 +38,6 @@ export default {
 
   data() {
     return {
-      selectedProgram: "",
       activeQuestionIndex: 0,
       isShaking: false,
     };
@@ -43,20 +49,28 @@ export default {
 
   computed: {
     ...mapGetters("questionnaire", {
-      questionnaire: "GET_QUESTIONNAIRE",
+      questionnaire: TYPES.GET_QUESTIONNAIRE,
+      questions: TYPES.GET_QUESTIONS,
     }),
 
-    canNext() {
-      if (this.questionnaire.questions.length === 0) {
+    currentQuestion() {
+      if (this.questions.length === 0) {
         return;
       }
 
-      const question = this.questionnaire.questions[this.activeQuestionIndex];
+      return this.questions[this.activeQuestionIndex];
+    },
+
+    canNext() {
+      if (!this.currentQuestion) {
+        return;
+      }
 
       return (
-        !question.required ||
-        (question.choices && question.choices.some((item) => item.selected)) ||
-        (question.text && question.text.length > 0)
+        !this.currentQuestion.required ||
+        (this.currentQuestion.choices &&
+          this.currentQuestion.choices.some((item) => item.selected)) ||
+        (this.currentQuestion.text && this.currentQuestion.text.length > 0)
       );
     },
   },
@@ -72,10 +86,7 @@ export default {
     },
 
     nextQuestion() {
-      if (
-        this.activeQuestionIndex >= this.questionnaire.questions.length - 1 ||
-        !this.canNext
-      ) {
+      if (this.activeQuestionIndex >= this.questions.length || !this.canNext) {
         this.shake();
         return;
       }

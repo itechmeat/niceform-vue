@@ -144,6 +144,7 @@ $block: ".ui-variant";
     border-radius: 4px;
     color: var(--color-light);
     transition: 0.2s;
+    will-change: box-shadow, background;
 
     &:hover {
       background: rgba(#fff, 0.2);
@@ -226,6 +227,7 @@ $block: ".ui-variant";
     color: transparent;
     transform: translateX(50%) scaleX(0);
     transition: transform 0.2s, color 0.2s 0.1s;
+    will-change: transform;
 
     #{$block}__box:hover &,
     #{$block}_active & {
@@ -243,6 +245,7 @@ $block: ".ui-variant";
     transform: scale(0);
     transition: transform 0.2s cubic-bezier(0, 0, 0.6, 2),
       opacity 0.2s cubic-bezier(0, 0, 0.6, 2);
+    will-change: transform;
 
     &::before,
     &::after {

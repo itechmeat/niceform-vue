@@ -1,6 +1,6 @@
 <template>
   <article
-    v-shortkey="{ left: ['arrowleft'], right: ['arrowright'] }"
+    v-shortkey="hotKeys"
     v-touch:swipe="handleSwipe"
     class="feed"
     @shortkey="navigate"
@@ -14,6 +14,23 @@
 <script>
 export default {
   name: "Feed",
+
+  props: {
+    canNavigate: Boolean,
+  },
+
+  computed: {
+    hotKeys() {
+      if (!this.canNavigate) {
+        return {};
+      }
+
+      return {
+        left: ["arrowleft"],
+        right: ["arrowright"],
+      };
+    },
+  },
 
   methods: {
     navigate(e) {

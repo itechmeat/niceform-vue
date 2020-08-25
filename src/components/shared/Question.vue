@@ -1,20 +1,20 @@
 <template>
-  <section v-if="formattedValue" :class="classes">
+  <section v-if="value" :class="classes">
     <div class="question__box">
       <header class="question__header">
         <small class="question__number">{{ ownIndex + 1 }}</small>
         <h2 class="question__title">
-          {{ formattedValue.headline }}
-          <sup v-if="formattedValue.required" class="question__required">*</sup>
+          {{ value.headline }}
+          <sup v-if="value.required" class="question__required">*</sup>
         </h2>
-        <p v-if="formattedValue.description" class="question__description">
-          {{ formattedValue.description }}
+        <p v-if="value.description" class="question__description">
+          {{ value.description }}
         </p>
       </header>
 
       <div class="question__form">
         <div
-          v-if="formattedValue.question_type === 'multiple-choice'"
+          v-if="value.question_type === 'multiple-choice'"
           :class="[
             'question__options',
             'question__options_multiple',
@@ -24,10 +24,10 @@
           @shortkey="navigate"
         >
           <ui-variant
-            v-for="(option, index) in formattedValue.choices"
+            v-for="(option, index) in value.choices"
             :key="index"
             :type="typeOfControl"
-            :name="formattedValue.identifier"
+            :name="value.identifier"
             :value="option.value"
             :label="option.label"
             :variant="getCharNum(index)"
@@ -38,14 +38,20 @@
         </div>
 
         <div
-          v-else-if="formattedValue.question_type === 'text'"
+          v-else-if="value.question_type === 'text'"
           class="question__options"
         >
-          <component :is="'ui-' + typeOfControl" :value="formattedValue.text" />
+          <component
+            ref="input"
+            :is="'ui-' + typeOfControl"
+            :value="value.text"
+            @input="inputText"
+            @submit="submitText"
+          />
         </div>
 
         <div v-else class="question__options">
-          :(
+          Something wrong with the question :(
         </div>
       </div>
 
@@ -69,6 +75,8 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+import * as TYPES from "@/store/modules/questionnaire/types";
 import { getCharsList, getCharByIndex } from "@/libs/utils";
 
 const CHARS_TO_COLUMNS = 20;
@@ -98,13 +106,8 @@ export default {
 
   data() {
     return {
-      formattedValue: null,
       activeVariantIndex: null,
     };
-  },
-
-  mounted() {
-    this.formatValue(this.value);
   },
 
   computed: {
@@ -129,14 +132,17 @@ export default {
     },
 
     typeOfControl() {
-      if (this.formattedValue.question_type === "text") {
-        if (!this.formattedValue.multiline) {
+      if (!this.value) {
+        return;
+      }
+      if (this.value.question_type === "text") {
+        if (!this.value.multiline) {
           return "input";
         }
         return "textarea";
       }
-      if (this.formattedValue.question_type === "multiple-choice") {
-        if (!this.formattedValue.multiple) {
+      if (this.value.question_type === "multiple-choice") {
+        if (!this.value.multiple) {
           return "radio";
         }
         return "checkbox";
@@ -161,11 +167,11 @@ export default {
     },
 
     noteText() {
-      if (!this.typeOfControl || !this.formattedValue) {
+      if (!this.typeOfControl || !this.value) {
         return;
       }
 
-      if (!this.formattedValue.required) {
+      if (!this.value.required) {
         if (this.typeOfControl === "radio") {
           return "You can choose any option or skip";
         }
@@ -189,31 +195,35 @@ export default {
     },
 
     canSubmit() {
-      if (!this.typeOfControl || !this.formattedValue) {
+      if (!this.typeOfControl || !this.value) {
         return;
       }
 
-      if (!this.formattedValue.required) {
+      if (!this.value.required) {
         return true;
       }
 
-      if (
-        this.formattedValue.choices &&
-        this.formattedValue.choices.length > 0
-      ) {
-        return this.formattedValue.choices.some((item) => item.selected);
+      if (this.value.choices && this.value.choices.length > 0) {
+        return this.value.choices.some((item) => item.selected);
       }
 
-      return this.formattedValue.text && this.formattedValue.text.length > 0;
+      return this.value.text && this.value.text.length > 0;
     },
 
     hotChars() {
-      const chars = getCharsList().slice(0, this.formattedValue.choices.length);
+      if (!this.value || this.value.question_type === "text") {
+        return;
+      }
+      const chars = getCharsList().slice(0, this.value.choices.length);
       return chars.map((char) => char.toLowerCase());
     },
 
     hotKeys() {
-      if (this.activeIndex !== this.ownIndex) {
+      if (
+        !this.value ||
+        this.value.question_type === "text" ||
+        this.activeIndex !== this.ownIndex
+      ) {
         return;
       }
 
@@ -236,6 +246,14 @@ export default {
       immediate: true,
       handler(val) {
         if (val === this.ownIndex) {
+          if (
+            this.typeOfControl &&
+            (this.typeOfControl === "input" ||
+              this.typeOfControl === "textarea")
+          ) {
+            this.$refs.input.focus();
+          }
+
           return;
         }
         this.activeVariantIndex = null;
@@ -244,60 +262,46 @@ export default {
   },
 
   methods: {
-    formatValue(val) {
-      if (!val) {
-        return;
-      }
-
-      const result = { ...val };
-
-      if (result.multiple) {
-        result.multiple = result.multiple === "true";
-      }
-
-      if (result.multiline) {
-        result.multiline = result.multiline === "true";
-      }
-
-      if (result.question_type === "text") {
-        result.text = null;
-      }
-
-      this.formattedValue = result;
-    },
+    ...mapMutations("questionnaire", {
+      setText: TYPES.SET_QUESTION_TEXT,
+      setVariant: TYPES.SET_QUESTION_VARIANT,
+    }),
 
     getCharNum(index) {
       return getCharByIndex(index);
     },
 
     change(val) {
-      const variant = this.formattedValue.choices.find(
-        (choice) => choice.value === val.value
-      );
-
-      if (!variant || variant === -1) {
-        return;
-      }
-
-      if (val.type === "checkbox") {
-        variant.selected = val.selected;
-      }
+      this.setVariant({
+        identifier: this.value.identifier,
+        variant: val,
+      });
 
       if (val.type === "radio") {
-        this.formattedValue.choices.forEach((item) => {
-          item.selected = false;
-        });
-        variant.selected = true;
-
         this.submit();
       }
+    },
+
+    inputText(val) {
+      this.setText({
+        identifier: this.value.identifier,
+        text: val,
+      });
+    },
+
+    submitText(val) {
+      this.setText({
+        identifier: this.value.identifier,
+        text: val,
+      });
+      this.submit(0);
     },
 
     navigate(val) {
       if (val.srcKey === "down") {
         if (
           this.activeVariantIndex === null ||
-          this.activeVariantIndex === this.formattedValue.choices.length - 1
+          this.activeVariantIndex === this.value.choices.length - 1
         ) {
           this.activeVariantIndex = 0;
           return;
@@ -309,7 +313,7 @@ export default {
 
       if (val.srcKey === "up") {
         if (!this.activeVariantIndex) {
-          this.activeVariantIndex = this.formattedValue.choices.length;
+          this.activeVariantIndex = this.value.choices.length;
         }
 
         this.activeVariantIndex--;
@@ -327,17 +331,17 @@ export default {
         const index = this.hotChars.findIndex((char) => char === val.srcKey);
 
         if (this.typeOfControl === "radio") {
-          this.formattedValue.choices.forEach((item) => {
+          this.value.choices.forEach((item) => {
             item.selected = false;
           });
-          this.formattedValue.choices[index].selected = true;
+          this.value.choices[index].selected = true;
 
           this.submit();
         }
 
         if (this.typeOfControl === "checkbox") {
-          this.formattedValue.choices[index].selected = !this.formattedValue
-            .choices[index].selected;
+          this.value.choices[index].selected = !this.value.choices[index]
+            .selected;
         }
       }
     },
@@ -366,9 +370,12 @@ $block: ".question";
   line-height: 1.25;
   text-align: left;
   transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  will-change: transform, opacity;
 
   &_wrong {
-    animation: 0.5s ease-in-out 0s alternate shake;
+    @include display(tablet) {
+      animation: 0.5s ease-in-out 0s alternate shake;
+    }
   }
 
   &:not(#{$block}_active) {
@@ -494,6 +501,11 @@ $block: ".question";
       display: grid;
       grid-row-gap: calc(var(--gap) / 2);
       grid-column-gap: calc(var(--gap) * 1.5);
+
+      @media screen and (max-height: 500px) {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        white-space: nowrap;
+      }
     }
 
     @include display(tablet) {
