@@ -1,7 +1,5 @@
 <template>
-  <div>
-    CategoryPage
-  </div>
+  <div>CategoryPage</div>
 </template>
 
 <script>

@@ -3,9 +3,7 @@
     <span class="stepper__current">
       {{ current }}
     </span>
-    <span :class="slashClasses">
-      /
-    </span>
+    <span :class="slashClasses"> / </span>
     <span class="stepper__total">
       {{ total }}
     </span>
