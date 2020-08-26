@@ -24,12 +24,12 @@ describe("The application", () => {
 
   it("should have should open the first question", () => {
     cy.contains(".feed", CONTENT.questionnaire.questions[0].headline);
-    cy.contains(".stepper__current", "0");
+    cy.contains(".stepper__current", "1");
   });
 
   it("should have should slide to the second question", () => {
     cy.get(".keyboard__control_right").click();
     cy.contains(".feed", CONTENT.questionnaire.questions[1].headline);
-    cy.contains(".stepper__current", "1");
+    cy.contains(".stepper__current", "2");
   });
 });
