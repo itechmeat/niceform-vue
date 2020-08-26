@@ -35,7 +35,6 @@ export default {
   watch: {
     current: {
       handler(val) {
-        console.log();
         this.turnSlash(val > this.lastStep);
         this.lastStep = val;
       },
@@ -56,7 +55,6 @@ export default {
 
   methods: {
     turnSlash(val) {
-      console.log(val);
       if (!val) {
         this.mod = "prev";
       } else {

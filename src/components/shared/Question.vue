@@ -216,6 +216,20 @@ export default {
       return this.value.text && this.value.text.length > 0;
     },
 
+    jumpingStepId() {
+      if (!this.value || !this.value.jumps || this.value.jumps.length === 0) {
+        return;
+      }
+
+      const choice = this.value.choices.find((item) => item.selected);
+
+      const jump = this.value.jumps.find((item) => {
+        return item.conditions[0].value === choice.value;
+      });
+
+      return jump.destination.id;
+    },
+
     hotChars() {
       if (!this.value || this.value.question_type === "text") {
         return;
@@ -361,7 +375,7 @@ export default {
 
     submit(pause = 700) {
       setTimeout(() => {
-        this.$emit("submit");
+        this.$emit("submit", this.jumpingStepId);
       }, pause);
     },
   },

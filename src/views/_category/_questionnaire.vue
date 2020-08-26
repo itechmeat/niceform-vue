@@ -1,14 +1,18 @@
 <template>
   <div class="questionnaire">
-    <stepper :total="questions.length - 1" :current="activeQuestionIndex" />
+    <stepper
+      v-if="questions"
+      :total="questions.length - 1"
+      :current="activeQuestionIndex + 1"
+    />
 
     <feed
       v-if="slides"
       :can-navigate="
         currentQuestion && currentQuestion.question_type !== 'text'
       "
-      @left="prevQuestion()"
-      @right="nextQuestion()"
+      @left="prevQuestion"
+      @right="nextQuestion"
     >
       <question
         v-for="(question, index) in slides"
@@ -62,7 +66,7 @@ export default {
     }),
 
     slides() {
-      if (this.questions.length === 0) {
+      if (!this.questions || this.questions.length === 0) {
         return;
       }
 
@@ -76,7 +80,7 @@ export default {
     },
 
     currentQuestion() {
-      if (this.slides.length === 0) {
+      if (!this.slides || this.slides.length === 0) {
         return;
       }
 
@@ -119,12 +123,24 @@ export default {
       this.$refs.keyboard.handleKey("left");
     },
 
-    nextQuestion() {
+    nextQuestion(val) {
+      if (!this.questions) {
+        return;
+      }
+
       if (this.activeQuestionIndex >= this.slides.length - 1 || !this.canNext) {
         this.shake();
         return;
       }
-      this.activeQuestionIndex++;
+
+      if (!val) {
+        this.activeQuestionIndex++;
+      } else {
+        this.activeQuestionIndex = this.questions.findIndex((item) => {
+          return item.identifier === val;
+        });
+      }
+
       this.$refs.keyboard.handleKey("right");
     },
 
@@ -146,6 +162,25 @@ export default {
         this.isShaking = false;
       }, 500);
     },
+  },
+
+  metaInfo() {
+    let counter;
+    let title;
+
+    if (this.questions && this.questions.length > 0) {
+      counter = `[${this.activeQuestionIndex}/${this.questions.length - 1}]`;
+    }
+
+    if (counter && counter.length > 0) {
+      title = counter + " ";
+    }
+
+    if (this.currentQuestion) {
+      title = title + this.currentQuestion.headline;
+    }
+
+    return { title };
   },
 };
 </script>

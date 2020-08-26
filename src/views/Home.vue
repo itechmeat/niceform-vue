@@ -45,6 +45,14 @@ export default {
   methods: {
     ...mapActions("questionnaire", ["fetchQuestionnaire"]),
   },
+
+  metaInfo() {
+    const title = !this.questionnaire
+      ? "Questionnaire"
+      : this.questionnaire.name;
+
+    return { title };
+  },
 };
 </script>
 
