@@ -1,5 +1,5 @@
 <template>
-  <div v-if="current <= total" class="stepper">
+  <div v-if="current < total" class="stepper">
     <span class="stepper__current">
       {{ current }}
     </span>

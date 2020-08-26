@@ -169,7 +169,11 @@ export default {
     let title;
 
     if (this.questions && this.questions.length > 0) {
-      counter = `[${this.activeQuestionIndex}/${this.questions.length - 1}]`;
+      if (this.activeQuestionIndex < this.questions.length) {
+        counter = `[${this.activeQuestionIndex}/${this.questions.length - 1}]`;
+      } else {
+        counter = "🎉";
+      }
     }
 
     if (counter && counter.length > 0) {
