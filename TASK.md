@@ -28,7 +28,7 @@ react (although we prefer emberJ)
 
 ## Goals/Priorities
 - [x] Show UX skills, use CSS and possibly animate the transition between questions (high priority)
-- [ ] At least 1 component test (not auto generated) (high priority)
+- [x] At least 1 component test (not auto generated) (high priority)
 - [x] Clean code and MVC based application structure (high priority)
 - [x] There is no need to store results in a database
 - [x] Bonus: The design is responsive

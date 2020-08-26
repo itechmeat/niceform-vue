@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/_mixins";
+@import "@/assets/styles/_mixins.scss";
 
 $block: ".keyboard";
 
